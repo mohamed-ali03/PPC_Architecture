@@ -9,7 +9,7 @@ from ppc_interfaces.msg import MissionMSG
 class MissionServerNode(Node):
     def __init__(self):
         super().__init__("mission_service")
-        self.publish_to_mission = self.create_publisher(MissionMSG,"mission",10)
+        self.mission_pub = self.create_publisher(MissionMSG,"mission",10)
         self.mission_servic = self.create_service(MissionSRV,"start_mission",self.mission_service_callback)
         
 
@@ -21,11 +21,11 @@ class MissionServerNode(Node):
             mission_msg.y_pose = requst.y_pose
             self.get_logger().info(f"Go to ({mission_msg.x_pose},{mission_msg.y_pose}).")
             response.accepted = True
-            self.publish_to_mission.publish(mission_msg)
+            self.mission_pub.publish(mission_msg)
         elif mission_msg.mission_name == "Stop":
             self.get_logger().info("Go to idle mode")
             response.accepted = True
-            self.publish_to_mission.publish(mission_msg)
+            self.mission_pub.publish(mission_msg)
         else :
             self.get_logger().info("Not accepted")
             response.accepted = False
