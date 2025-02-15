@@ -1,6 +1,6 @@
 # Requst
-float64 x
-float64 y
+geometry_msgs/Pose target_pose
 ---
 # Response
+nav_msgs/Path path
 bool achevied

@@ -12,10 +12,10 @@ class CreatePlanNode(Node):
         
 
     def create_plan_callback(self,requst,response):
-        point = Point(x=requst.x, y=requst.y)
+        point = Point(x=requst.target_pose.position.x, y=requst.target_pose.position.y)
 
         # Global planner
-        response.achevied = False
+        response.achevied = True
         return response 
 
 

@@ -3,7 +3,6 @@ import sys
 import rclpy 
 from rclpy.node import Node
 from functools import partial
-from std_msgs.msg import String
 from ppc_interfaces.srv import MissionSRV
 
 
@@ -22,8 +21,8 @@ class MissionClientNode(Node):
         self.requst.mission_name = sys.argv[1]
 
         if self.requst.mission_name == "GoTo":
-            self.requst.x_pose = float(sys.argv[2])
-            self.requst.y_pose = float(sys.argv[3])
+            self.requst.target_pose.position.x = float(sys.argv[2])
+            self.requst.target_pose.position.y = float(sys.argv[3])
 
         future = self.mission_client.call_async(self.requst)
         future.add_done_callback(partial(self.callback_status))

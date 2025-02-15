@@ -22,7 +22,8 @@ setup(
         'console_scripts': [
             "behaviour = ppc_behaviour.behaviour:main",
             "idle_state = ppc_behaviour.Idle_state:main",
-            "create_plan = ppc_behaviour.create_plan:main"
+            "create_plan = ppc_behaviour.create_plan:main",
+            "navigate = ppc_behaviour.navigate:main"
         ],
     },
 )
