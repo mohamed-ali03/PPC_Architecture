@@ -9,12 +9,23 @@ from nav_msgs.msg import Path
 from rclpy.action import ActionClient
 from rclpy.action.client import ClientGoalHandle
 from nav2_msgs.action import FollowPath
+import time
 
 class BehaviourNode(Node):
     def __init__(self):
-        super().__init__("BehaviourNode")
-        self.mission_sub = self.create_subscription(MissionMSG,"mission",self.behaviour_callback,10)
-        self.state_pub = self.create_publisher(String,"state",10)
+        super().__init__("Behaviour_Node")
+        self.mission_sub = self.create_subscription(
+            MissionMSG,
+            "mission",
+            self.behaviour_callback,
+            10)
+        self.state_pub = self.create_publisher(
+            String,"state",10)
+        self.create_plan_servic_client = self.create_client(
+            CreatePlanSRV,"create_plan")
+        self.navigate_action_client = ActionClient(
+            self,FollowPath,'navigate')
+        self.create_plan_requst = CreatePlanSRV.Request()
         self.state = String()
         self.state.data = "idle"
         self.state_pub.publish(self.state)
@@ -33,15 +44,13 @@ class BehaviourNode(Node):
     def Cearte_plan(self,msg:MissionMSG):
         self.state.data = "create plan"
         self.state_pub.publish(self.state)
-        self.create_plan_servic_client = self.create_client(CreatePlanSRV,"create_plan")
         while not self.create_plan_servic_client.wait_for_service(timeout_sec=1.0):
             self.get_logger().info("waiting for create plan service ....")
 
-        create_plan_requst = CreatePlanSRV.Request()
-        create_plan_requst.target_pose.position.x = msg.target_pose.position.x
-        create_plan_requst.target_pose.position.y = msg.target_pose.position.y
+        self.create_plan_requst.target_pose.position.x = msg.target_pose.position.x
+        self.create_plan_requst.target_pose.position.y = msg.target_pose.position.y
 
-        self.create_plan_servic_client.call_async(create_plan_requst)\
+        self.create_plan_servic_client.call_async(self.create_plan_requst)\
         .add_done_callback(self.create_plan_response)
 
 
@@ -62,13 +71,15 @@ class BehaviourNode(Node):
     def navigate(self,path:Path):
         self.state.data = "navigate"
         self.state_pub.publish(self.state)
-        self.navigate_action_client = ActionClient(self,FollowPath,'navigate')
         while not self.navigate_action_client.wait_for_server(1.0):
             self.get_logger().info("Waiting for navigate server available......")
-        goal_msg = FollowPath().Goal()
-        goal_msg.path = path 
-        goal_msg.controller_id = "winner"
-        self.navigate_action_client.send_goal_async(goal_msg).add_done_callback(self.navigate_goal_response)
+        
+        self.goal_msg = FollowPath().Goal()
+        self.goal_msg.path = path 
+        self.goal_msg.controller_id = "winner"
+        self.navigate_action_client.send_goal_async(self.goal_msg)\
+            .add_done_callback(self.navigate_goal_response)
+        self.get_logger().info("goal is initiated ")
 
         
     def navigate_goal_response(self,future):

@@ -7,7 +7,7 @@ from geometry_msgs.msg import Point
 
 class CreatePlanNode(Node):
     def __init__(self):
-        super().__init__("CreatePlanNode")
+        super().__init__("Create_Plan_Node")
         self.create_plan_service_server = self.create_service(CreatePlanSRV,"create_plan",self.create_plan_callback)
         
 

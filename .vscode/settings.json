@@ -20,5 +20,6 @@
         "/home/mo/ROS2/ros_ws/install/goto_pose_action/lib/python3.8/site-packages",
         "/home/mo/ROS2/ros_ws/install/my_interfaces/lib/python3.8/site-packages",
         "/opt/ros/foxy/lib/python3.8/site-packages"
-    ]
+    ],
+    "cmake.sourceDirectory": "/home/mo/ROS2/PPC_task/src/ppc_interfaces"
 }

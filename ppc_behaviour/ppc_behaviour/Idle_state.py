@@ -7,7 +7,7 @@ from std_msgs.msg import String
 
 class IdleStateNode(Node):
     def __init__(self):
-        super().__init__("IdleStateNode")
+        super().__init__("Idle_State_Node")
         self.state_sub= self.create_subscription(String,"state",self.state_callback,10)
 
     def state_callback(self,msg:String):
