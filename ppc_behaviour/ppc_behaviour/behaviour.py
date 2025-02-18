@@ -8,7 +8,7 @@ from ppc_interfaces.srv import CreatePlanSRV
 from nav_msgs.msg import Path
 from rclpy.action import ActionClient
 from rclpy.action.client import ClientGoalHandle
-from nav2_msgs.action import FollowPath
+from ppc_interfaces.action import Navigate
 import time
 
 class BehaviourNode(Node):
@@ -24,7 +24,7 @@ class BehaviourNode(Node):
         self.create_plan_servic_client = self.create_client(
             CreatePlanSRV,"create_plan")
         self.navigate_action_client = ActionClient(
-            self,FollowPath,'navigate')
+            self,Navigate,'navigate')
         self.create_plan_requst = CreatePlanSRV.Request()
         self.state = String()
         self.state.data = "idle"
@@ -71,15 +71,16 @@ class BehaviourNode(Node):
     def navigate(self,path:Path):
         self.state.data = "navigate"
         self.state_pub.publish(self.state)
+        
         while not self.navigate_action_client.wait_for_server(1.0):
             self.get_logger().info("Waiting for navigate server available......")
         
-        self.goal_msg = FollowPath().Goal()
+        self.goal_msg = Navigate().Goal()
         self.goal_msg.path = path 
         self.goal_msg.controller_id = "winner"
         self.navigate_action_client.send_goal_async(self.goal_msg)\
-            .add_done_callback(self.navigate_goal_response)
-        self.get_logger().info("goal is initiated ")
+            .add_done_callback(self.navigate_goal_response,self.feedback_callback)
+        
 
         
     def navigate_goal_response(self,future):

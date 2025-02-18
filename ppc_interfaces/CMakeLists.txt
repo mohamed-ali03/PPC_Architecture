@@ -24,6 +24,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/MissionSRV.srv"
   "srv/CreatePlanSRV.srv"
   "msg/MissionMSG.msg"
+  "action/Navigate.action"
   DEPENDENCIES nav_msgs
 ) 
 
